@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:obesity_tracking_app2/Screens/authentification/login_connexion.dart';
 import 'package:obesity_tracking_app2/widgets/customTextField.dart';
@@ -18,7 +21,34 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  
+
+  /*Future<void> fetchData() async {
+    final response = await http.get(Uri.parse("http://localhost/dashboard/mHealthProject/connexion.php"));
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print(data);
+    } else {
+      print("HTTP request failed with status: ${response.statusCode}");
+    }
+  }*/
+
+  void login(String email, String password) async {
+    try {
+      final response = await http.get(Uri.parse("http://192.168.178.22/dashboard/mHealthProject/login.php?email=" + email + "&password=" + password));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (kDebugMode) {
+          print(data);
+        }
+      } else {
+        print("HTTP request failed with status: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("Error during HTTP request: $error");
+    }
+  }
+
   CustomTextField emailText  = CustomTextField(
     title: "Email",
     placeholder: "Enter Email",
@@ -60,15 +90,18 @@ class _LoginState extends State<Login> {
                     password.textFormField(),
                     SizedBox(height: 10,),
                     ElevatedButton(onPressed: (){
+                     login("","");
+                      //fetchData();
 
-                      if (_key.currentState != null) {
-                        if ( _key.currentState!.validate()) {
+
+                      /* if (_key.currentState != null) {
+                       if ( _key.currentState!.validate()) {
                           print(emailText.value);
                           print(password.value);
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>  transitionLogin_Entries() ));
 
-                        }
-                      }
+                       }
+                      }*/
 
                     },
                       child: Text("Login"),

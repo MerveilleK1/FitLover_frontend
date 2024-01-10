@@ -1,5 +1,6 @@
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:obesity_tracking_app2/Screens/AppPages/DailyRecap.dart';
 
 
 class Entries extends StatefulWidget {
@@ -15,6 +16,7 @@ class _EntriesState extends State<Entries> {
   String selectedSmQuantity = "100 g";
   String selectedAlQuantity = "200 mL";
   String selectedStressLevel = "Normal";
+  String selectedActivLevel = "Poor";
   DateTime selectedDate = DateTime.now();
 
 
@@ -143,7 +145,7 @@ class _EntriesState extends State<Entries> {
                   Text("Alcohol (in mL)", textAlign: TextAlign.left, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),),
                   DropdownButtonFormField(
                       items: const [
-                        DropdownMenuItem(value: "- 200 mL", child:  Text("- 200 mL")),
+                        DropdownMenuItem(value: "[0 - 200 mL]", child:  Text("[0 - 200 mL]")),
                         DropdownMenuItem(value: "200 mL", child:  Text("200 mL")),
                         DropdownMenuItem(value: "+ 200 mL", child:  Text("+ 200 mL")),
 
@@ -163,7 +165,7 @@ class _EntriesState extends State<Entries> {
                   ),
                   SizedBox(height: 20,),
 
-                  Text("Level of Stress( /3 )", textAlign: TextAlign.left, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),),
+                  Text("Stress level( /3 )", textAlign: TextAlign.left, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),),
                   DropdownButtonFormField(
                       items: const [
                         DropdownMenuItem(value: "No stress", child:  Text("1= No stress ")),
@@ -185,17 +187,48 @@ class _EntriesState extends State<Entries> {
                       }
                   ),
                   SizedBox(height: 20,),
+                  Text("Physical activity level( /3 )", textAlign: TextAlign.left, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black54),),
+                  DropdownButtonFormField(
+                      items: const [
+                        DropdownMenuItem(value: "Poor", child:  Text("1 = Not active ")),
+                        DropdownMenuItem(value: "Active", child:  Text("2= Active")),
+                        DropdownMenuItem(value: "Very active", child:  Text("3= Very active")),
+
+                      ],
+                      validator: (value){
+                        if(value == null  || value.isEmpty){
+                          return" Complete this field";
+                        }
+                        return null;
+                      },
+                      onChanged: (value){
+                        setState(() {
+                          selectedActivLevel = value!;
+                        });
+                      }
+                  ),
+                  SizedBox(height: 20,),
 
                   ElevatedButton(onPressed: (){
                     if(_formKey.currentState!.validate()){
-                      ScaffoldMessenger.of(context).showSnackBar(
+                     /* ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Connecting....", style: TextStyle(color:  Colors.redAccent)))
-                      );
+                      );*/
                        // pour fermer le clavier:
                       FocusScope.of(context).requestFocus(FocusNode());
 
                       print(" The user drunk  $selectedWaterQuantity of water today. ");
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>  DailyRecap(
+                        water: selectedWaterQuantity,
+                        sweetmeats: selectedSmQuantity,
+                        alcohol: selectedAlQuantity,
+                        stressLevel: selectedStressLevel,
+                        activityLevel: selectedActivLevel
+                      ),
+                      ),
+                      );
+
                     }
                   },
                     child: Text("Finished"),

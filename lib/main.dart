@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:obesity_tracking_app2/Screens/AppPages/DailyRecap.dart';
 import 'package:obesity_tracking_app2/Screens/AppPages/transitionlogin-entries.dart';
 import 'package:obesity_tracking_app2/Screens/homePage.dart';
 
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       home: //transitionLogin_Entries(),
       //Entries(),
       HomePage(),
+      //DailyRecap(),
     );
   }
   }
