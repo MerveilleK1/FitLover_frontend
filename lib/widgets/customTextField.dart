@@ -8,8 +8,11 @@ class CustomTextField{
   String _value = "";
 
   CustomTextField({ this.title="" , this.placeholder="", this.ispass=false , this.err="Please complete the field"});
+  TextEditingController controller = new TextEditingController();
+
   TextFormField textFormField(){
     return TextFormField(
+      controller: controller,
       onChanged: (e){
         _value = e ;
       },

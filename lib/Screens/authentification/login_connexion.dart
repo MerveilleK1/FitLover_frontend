@@ -1,8 +1,11 @@
-/*import 'dart:convert';
+import 'dart:convert';
 
 
 import 'package:http/http.dart' as http;
 
+
+
+//First code to test the connexion with the backend
 
 Future<Request> login_Connexion() async {
   final response = await http
@@ -48,6 +51,6 @@ class Request {
   }
 
 
-}*/
+}
 
 

@@ -24,7 +24,6 @@ class _ThanksState extends State<Thanks> {
       child:  Scaffold(
         appBar: AppBar(
           title: Text(''),
-          // Ajoutez d'autres propriétés de AppBar selon vos besoins
         ),
         backgroundColor: Colors.transparent,
         body: Center(

@@ -1,45 +1,57 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:obesity_tracking_app2/Screens/authentification/login_connexion.dart';
 import 'package:obesity_tracking_app2/widgets/customTextField.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../AppPages/transitionlogin-entries.dart';
 
 class Login extends StatefulWidget {
+
   final VoidCallback visible; // Je modifie la fonction visible dans les widgets login et register
-  const Login(this.visible, {Key? key}) : super(key: key);
-
-
-
-  // const Login(this.visible,{super.key});
+  const Login(this.visible,{Key? key}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+  String error = "";
 
-
-  /*Future<void> fetchData() async {
-    final response = await http.get(Uri.parse("http://localhost/dashboard/mHealthProject/connexion.php"));
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      print(data);
-    } else {
-      print("HTTP request failed with status: ${response.statusCode}");
-    }
-  }*/
-
-  void login(String email, String password) async {
+  void loginUser(String email, String password) async {
+    setState(() {
+      error= "";
+    });
     try {
-      final response = await http.get(Uri.parse("http://192.168.178.22/dashboard/mHealthProject/login.php?email=" + email + "&password=" + password));
+      final response = await http.post(
+        Uri.parse("http://192.168.178.22/dashboard/mHealthProject/login.php"), // URL homenetz
+       // Uri.parse("http://141.45.43.215/dashboard/mHealthProject/login.php"), // URL HTW
+
+      body: {
+          'email': email,
+          'password': password,
+        },
+      );
+
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (kDebugMode) {
-          print(data);
+           // on sait que à l indice 0 c est le message, et à l indice 1 c est la variable entière success et au 2 c est l utilisateur
+          if (data['status'] == 'success') {
+            await saveUserLoggedIn(true);
+        //connexion réussie
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => transitionLogin_Entries()),
+            );
+          } else {
+            setState(() {
+              error = data['message'];
+
+            });
+           // print("Login failed: ${data['message']}");
+          }
         }
       } else {
         print("HTTP request failed with status: ${response.statusCode}");
@@ -48,6 +60,22 @@ class _LoginState extends State<Login> {
       print("Error during HTTP request: $error");
     }
   }
+
+  Future<void> saveUserLoggedIn(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  Future<void> saveUserData(Map<String, dynamic> userData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', jsonEncode(userData));
+  }
+
+  Future<void> logOut() async {
+    await saveUserLoggedIn(false);
+    await saveUserData({});
+  }
+
 
   CustomTextField emailText  = CustomTextField(
     title: "Email",
@@ -71,8 +99,8 @@ class _LoginState extends State<Login> {
           child: Container(
             padding: EdgeInsets.all(30),
             child:  Form(
-              key: _key, // Ici je mets ma clé que j'ai initialisé
-                child: Column( // On a pris tout ce qui est dans le column et on l'a wrap dans un Form
+              key: _key, // Here, the initialized key
+                child: Column(   // we took all from the Column and wrapped it into a Form
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Container(
@@ -82,7 +110,6 @@ class _LoginState extends State<Login> {
                       ),
                       child: const Icon(Icons.person, color: Colors.redAccent, size: 120),
                     ),
-                    // Text("Login", textAlign: TextAlign.center, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.redAccent),),
                     SizedBox(height: 30,),
                     emailText.textFormField(),
 
@@ -90,25 +117,17 @@ class _LoginState extends State<Login> {
                     password.textFormField(),
                     SizedBox(height: 10,),
                     ElevatedButton(onPressed: (){
-                     login("","");
-                      //fetchData();
+                      FocusScope.of(context).requestFocus(FocusNode());
 
-
-                      /* if (_key.currentState != null) {
+                       if (_key.currentState != null) {
                        if ( _key.currentState!.validate()) {
+                        loginUser(emailText.value, password.value);
                           print(emailText.value);
-                          print(password.value);
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>  transitionLogin_Entries() ));
-
-                       }
-                      }*/
-
-                    },
+                          print(password.value); }}},
                       child: Text("Login"),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent),
                       ),
-
                     ),
                     Row(
                       mainAxisAlignment:  MainAxisAlignment.center,
@@ -118,13 +137,13 @@ class _LoginState extends State<Login> {
                           onPressed: widget.visible,
                           child: Text('Register', style: TextStyle(color: Colors.redAccent),),
                           style: ButtonStyle(
-                            side: MaterialStateProperty.all(BorderSide.none), // Aucune bordure
+                            side: MaterialStateProperty.all(BorderSide.none), // For a button with no bordure = transparent button
                           ),
                         ),
                       ],
-                    )
-
-
+                    ),
+                    SizedBox(height: 30,),
+                    Text(error, style:  TextStyle(color: Colors.redAccent), textAlign: TextAlign.center,)
                   ],
                 ),
             )

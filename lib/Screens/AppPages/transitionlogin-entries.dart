@@ -1,13 +1,22 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../authentification/login.dart';
+import '../homePage.dart';
 import 'Entries.dart';
 
 class transitionLogin_Entries extends StatelessWidget {
+  const transitionLogin_Entries({ // Ajoutez cette ligne
+    Key? key,
+  }) : super(key: key);
 
-  const transitionLogin_Entries({
-    super.key});
 
-
+  Future<void> logOut(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+   // await prefs.clear(); // delete all the saved informations
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +34,16 @@ class transitionLogin_Entries extends StatelessWidget {
       child:  Scaffold(
         appBar: AppBar(
           title: Text(''),
-          // Ajoutez d'autres propriétés de AppBar selon vos besoins
+          actions: [
+            IconButton(
+              onPressed: () {
+             logOut(context);
+             exit(0);
+              },
+              icon: Icon(Icons.logout),
+            ),
+          ],
+
         ),
         backgroundColor: Colors.transparent,
         body: Center(
@@ -49,71 +67,13 @@ class transitionLogin_Entries extends StatelessWidget {
               ElevatedButton(onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>  Entries() ));
 
+                }, child: Icon(Icons.navigate_next, color: Colors.white, size: 30),
 
-              }, child: Icon(Icons.navigate_next, color: Colors.white, size: 30),
-
-              )
-
-
+              ),
             ],
           ),
         ),
-
-
       ),
-
-
-
     );
-
-
-
-    //return const Login();
-
-    /*return Scaffold(
-      body: Container(
-        color: Colors.redAccent,
-        child: Column(
-
-
-          children:[
-            Text("Welcome fitLover !", style: TextStyle(fontSize: 35,
-              fontFamily: 'Poppins'),
-            ),
-    ],
-
-          ),
-
-    ),
-
-    );*/
-
-    /*return Container(
-      color: Colors.white,
-
-      child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Welcome fitLover !",
-                style: TextStyle(
-                    fontSize:  35,
-                    fontFamily: 'Poppins'
-                ),
-              ),
-              SizedBox(height: 20),
-              Text("Learn, taking care of yourself !",
-                style:  TextStyle(
-                    fontSize: 20
-                ),
-                //textAlign:  TextAlign.center,
-              ),
-              //Padding(padding: EdgeInsets.only(top: 20)),
-
-            ],
-          )
-      ),
-    );*/
-
   }
 }
